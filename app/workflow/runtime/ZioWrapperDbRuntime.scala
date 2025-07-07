@@ -3,23 +3,22 @@ package workflow.runtime
 import cats.effect.IO
 import doobie.util.transactor.Transactor
 import effect.sorus.*
-import play.api.Logging
+import play.api.{Configuration, Logging}
 import workflow.domain.*
 import workflow.domain.KycWorkflow.*
 import workflows4s.doobie.postgres.{ PostgresWorkflowStorage, WorkflowId }
 import workflows4s.doobie.{ ByteCodec, DatabaseRuntime, WorkflowStorage }
+import workflows4s.runtime.WorkflowInstance
 import workflows4s.runtime.wakeup.{ KnockerUpper, NoOpKnockerUpper }
 import workflows4s.wio.SignalDef
+import workflows4s.wio.model.WIOExecutionProgress
 
+import javax.inject.*
 import scala.util.{ Failure, Success, Try }
 
 import zio.*
 import zio.interop.catz.*
 import zio.json.*
-import workflows4s.runtime.WorkflowInstance
-import workflows4s.wio.model.WIOExecutionProgress
-import play.api.Configuration
-import javax.inject.*
 
 /**
  * Main goal : encapsulate the mapping Cats <> ZIO
