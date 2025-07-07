@@ -4,16 +4,13 @@ import wiring.ZioRuntime
 import play.api.mvc.ControllerComponents
 import play.api.Logging
 
-import javax.inject.{ Inject, Singleton }
+import javax.inject.Inject
 import scala.annotation.nowarn
-import scala.concurrent.ExecutionContext
 
-import com.google.inject.ImplementedBy
-
-import play.api.i18n.{ I18nSupport, Lang }
+import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import zio.Runtime
-import effect.play.ZioPlayHelper
+import effect.play.ZioController
 
 trait MainWebController
   extends MainController[ZioRuntime.AppContext] {
@@ -27,7 +24,7 @@ trait MainWebController
 trait MainController[ZAPP]
   extends BaseController
     with I18nSupport
-    with ZioPlayHelper
+    with ZioController[ZAPP]
     with Logging {
 
   /**

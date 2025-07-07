@@ -5,6 +5,11 @@
 GET   /                                                         controllers.ApplicationController.home()
 GET   /ping                                                     controllers.ApplicationController.ping()
 
+GET   /kyc/create/:user_id                                      controllers.WorkflowController.create_kyc(user_id)
+GET   /kyc/:workflow_id                                         controllers.WorkflowController.render(workflow_id)
+GET   /kyc/:workflow_id/update                                  controllers.WorkflowController.update_data(workflow_id)
+
+
 # Assets
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                           controllers.Assets.versioned(path="/public", file: Asset)
