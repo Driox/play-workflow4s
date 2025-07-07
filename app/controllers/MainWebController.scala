@@ -13,6 +13,7 @@ import com.google.inject.ImplementedBy
 import play.api.i18n.{ I18nSupport, Lang }
 import play.api.mvc.*
 import zio.Runtime
+import effect.play.ZioPlayHelper
 
 trait MainWebController
   extends MainController[ZioRuntime.AppContext] {
@@ -26,7 +27,7 @@ trait MainWebController
 trait MainController[ZAPP]
   extends BaseController
     with I18nSupport
-    // with ZioController[ZAPP]
+    with ZioPlayHelper
     with Logging {
 
   /**

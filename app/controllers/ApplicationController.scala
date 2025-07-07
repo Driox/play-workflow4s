@@ -2,10 +2,9 @@ package controllers
 
 import play.api.Configuration
 import play.api.i18n.*
-import play.api.libs.json.Json
-import play.api.mvc.Cookie
 
 import javax.inject.*
+import zio.ZIO
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -20,8 +19,8 @@ final class ApplicationController @Inject() (configuration: Configuration) exten
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def home() = Action {
-    Ok(views.html.index())
+  def home() = Action.zio { implicit req =>
+    ZIO.succeed(Ok(views.html.index()))
   }
 
   def ping() = Action {
