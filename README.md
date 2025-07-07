@@ -52,7 +52,7 @@ You can run the workflow in memory in `test/KycWorkflowTest.scala` with `sbt tes
 The Play Controller exposes 3 endpoints:
 
 - `create_kyc`: create a new workflow instance and deliver a signal to it
-- `update_data`: update the workflow instance with some data
+- `update_data`: update the workflow instance with some data. For now it's static data that make the workflow fail. It allow to see the progression of the workflow on the `render` endpoint
 - `render`: render the workflow instance
 
 You can start with this url `http://localhost:9000/kyc/create/usr-0001`
