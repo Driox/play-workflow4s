@@ -1,32 +1,29 @@
-package workflow
-
-import workflow.domain.*
-import workflow.domain.KycWorkflow.*
+package workflow.runtime
 
 import effect.sorus.*
 import play.api.Logging
 import play.api.db.DBApi
-import play.twirl.api.Html
-import utils.{ NumberUtils, StringUtils }
+import workflow.domain.*
+import workflow.domain.KycWorkflow.*
 import workflows4s.anorm.postgres.{ PostgresWorkflowStorage, WorkflowId }
 import workflows4s.anorm.{ ByteCodec, DatabaseRuntime, WorkflowStorage }
-import workflows4s.mermaid.MermaidRenderer
+import workflows4s.runtime.WorkflowInstance
 import workflows4s.runtime.wakeup.{ KnockerUpper, NoOpKnockerUpper }
 import workflows4s.wio.SignalDef
+import workflows4s.wio.model.WIOExecutionProgress
 
 import javax.inject.*
 import scala.util.{ Failure, Success, Try }
-
-import org.apache.pekko.actor.ActorSystem
 
 import zio.*
 import zio.json.*
 
 /**
- * Main goal : Zio wrapper
+ * This looks like ZioWrapperDbRuntime but really it only wrap `ZIO[Any, Throwable, X]` into `ZIO[Any, Fail, X]`
+ * If you keep Throwable as error channel, you don't need getProgress or deliverSignal
  */
 @Singleton
-class WorkflowDbRuntime @Inject() (dbapi: DBApi) extends ZioSorus with Logging {
+class ZioDbRuntime @Inject() (dbapi: DBApi) extends ZioSorus with Logging {
 
   protected val db = dbapi.database("default")
 
@@ -50,8 +47,7 @@ class WorkflowDbRuntime @Inject() (dbapi: DBApi) extends ZioSorus with Logging {
     }
   }
 
-  // WorkflowId is a Long => WorkflowId(1L)
-  def get_runtime() = {
+  def getRuntime(): DatabaseRuntime[KycContext.Ctx, WorkflowId] = {
     val initialState: KycState                               = KycState.Empty
     val storage: WorkflowStorage[WorkflowId, KycEvent]       = new PostgresWorkflowStorage[KycEvent](db)(using eventCodec)
     val knockerUpper: KnockerUpper.Agent[WorkflowId]         = NoOpKnockerUpper.Agent
@@ -59,18 +55,22 @@ class WorkflowDbRuntime @Inject() (dbapi: DBApi) extends ZioSorus with Logging {
     runtime
   }
 
-  def createInstance(workflow_id: WorkflowId) = {
-    get_runtime().createInstance(workflow_id) ?|> "Error loading instance"
+  def createInstance(workflow_id: WorkflowId): ZIO[Any, Fail, WorkflowInstance[Task, KycWorkflow.KycContext.State]] = {
+    getRuntime().createInstance(workflow_id) ?|> "Error loading instance"
   }
 
-  def getProgress(workflow_id: WorkflowId) = {
-    get_runtime()
+  def getProgress(workflow_id: WorkflowId): ZIO[Any, Fail, WIOExecutionProgress[KycWorkflow.KycContext.State]] = {
+    getRuntime()
       .createInstance(workflow_id)
       .flatMap(_.getProgress) ?|> "Error loading progress"
   }
 
-  def deliverSignal[Req, Resp](workflow_id: WorkflowId, signalDef: SignalDef[Req, Resp], req: Req) = {
-    get_runtime()
+  def deliverSignal[Req, Resp](
+    workflow_id: WorkflowId,
+    signalDef:   SignalDef[Req, Resp],
+    req:         Req
+  ): ZIO[Any, Fail, Either[WorkflowInstance.UnexpectedSignal, Resp]] = {
+    getRuntime()
       .createInstance(workflow_id)
       .flatMap(_.deliverSignal(signalDef, req)) ?|> "Error delivering signal"
   }

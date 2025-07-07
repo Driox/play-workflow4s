@@ -1,7 +1,8 @@
 package workflow.domain
 
-import java.time.{ Instant, LocalDate }
 import utils.StringUtils
+
+import java.time.{ Instant, LocalDate }
 
 case class User(
   id:    String = "usr-" + StringUtils.randomAlphanumericString(4),

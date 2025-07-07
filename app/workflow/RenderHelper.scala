@@ -2,10 +2,6 @@ package workflow
 
 import workflows4s.mermaid.MermaidFlowchart
 
-import java.nio.charset.StandardCharsets
-import java.util.zip.Deflater
-import java.util.{ Arrays, Base64 }
-
 object RenderHelper {
 
   def toImg(in: MermaidFlowchart) = {

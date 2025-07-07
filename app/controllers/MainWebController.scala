@@ -1,16 +1,15 @@
 package controllers
 
-import wiring.ZioRuntime
-import play.api.mvc.ControllerComponents
+import effect.play.ZioController
 import play.api.Logging
+import play.api.i18n.I18nSupport
+import play.api.mvc.*
+import wiring.ZioRuntime
 
 import javax.inject.Inject
 import scala.annotation.nowarn
 
-import play.api.i18n.I18nSupport
-import play.api.mvc.*
 import zio.Runtime
-import effect.play.ZioController
 
 trait MainWebController
   extends MainController[ZioRuntime.AppContext] {

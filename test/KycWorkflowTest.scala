@@ -1,19 +1,14 @@
 package workflows
 
-import workflow.domain.*
-import workflow.domain.KycWorkflow.*
-import cats.effect.IO
-import test.ZioTestHelper
-import workflows4s.wio.WorkflowContext
-import workflows4s.mermaid.MermaidRenderer
-
-import scala.concurrent.duration.DurationInt
-import scala.util.Try
-import workflows4s.runtime.{ InMemorySyncRuntime, InMemorySyncWorkflowInstance }
-import org.scalatest.matchers.must.Matchers
-import org.scalatest.wordspec.AnyWordSpec
 import _root_.workflow.RenderHelper
 import play.api.Logging
+import workflow.domain.*
+import workflow.domain.KycWorkflow.*
+import workflows4s.mermaid.MermaidRenderer
+import workflows4s.runtime.InMemorySyncRuntime
+
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
 class KycWorkflowTest extends AnyWordSpec with Matchers with Logging {
 

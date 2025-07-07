@@ -1,9 +1,9 @@
 package controllers
 
 import play.api.Configuration
-import play.api.i18n.*
 
 import javax.inject.*
+
 import zio.ZIO
 
 /**
